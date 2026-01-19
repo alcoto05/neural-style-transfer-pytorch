@@ -1,3 +1,4 @@
+from matplotlib.pyplot import step
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
@@ -103,5 +104,4 @@ def train(content_path,
 
         # Save image (every 500 steps so we don't flood the output folder)
         if step % 500 == 0:
-            save_image(generated_img, f"{output_path}/generated_{step}.png")
-
+            save_image(denorm(generated_img), f"{output_path}/generated_{step}.png")

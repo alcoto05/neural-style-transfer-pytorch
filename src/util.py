@@ -37,3 +37,14 @@ def gram_matrix(tensor):
     features = tensor.view(b * c, h * w)  # reshaping
     G = torch.mm(features, features.t())  
     return G.div(b * c * h * w) # normalize by total number of elements
+
+def get_denormalize_transform(device):
+    """Creates a denormalization transform for images based on ImageNet stats."""
+    mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).to(device)
+    std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).to(device)
+    
+    def denormalize(tensor):
+        tensor = tensor * std + mean
+        return torch.clamp(tensor, 0, 1) 
+        
+    return denormalize
