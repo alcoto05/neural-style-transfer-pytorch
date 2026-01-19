@@ -14,12 +14,3 @@ def get_vgg_model(device):
     vgg.to(device)
     print("VGG19 model loaded and moved to device:", device)
     return vgg
-
-if __name__ == "__main__":
-    # Test rápido para ver qué hay dentro
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = get_vgg_model(device)
-    
-    # Imprimimos la arquitectura para que veas las capas una a una
-    print("\n--- ARQUITECTURA DE VGG19 (FEATURES) ---")
-    print(model)

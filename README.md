@@ -1,4 +1,4 @@
-# Neural Style Transfer desde Cero con PyTorch
+# Neural Style Transfer from scratch with PyTorch
 
 Manual implementation of the artistic style transfer algorithm.
 The goal is to understand tensor manipulation and Gram matrix calculation without using "black box" libraries.
