@@ -10,7 +10,8 @@ imsize = 512 if torch.cuda.is_available() else 128 # Depending on whether GPU is
 loader = transforms.Compose([
     transforms.Resize(imsize),  
     transforms.CenterCrop(imsize), 
-    transforms.ToTensor()]) 
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]) 
 
 def image_loader(image_name):
     """Loads an image and returns it as a tensor to the GPU/CPU."""

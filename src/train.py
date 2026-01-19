@@ -6,12 +6,12 @@ from src.models import VGGFeatures, get_vgg_model
 from src.util import image_loader, imshow, gram_matrix
 from torch.optim import Adam
 from torchvision.utils import save_image
-
+from src.util import get_denormalize_transform
 
 device= torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-
+denorm = get_denormalize_transform(device)
 def early_stopping_setup(total_loss,prev_loss = float('inf'), patience = 50, patience_counter = 0, min_delta = 0.01):
         current_loss = total_loss.item()
         # Si la diferencia es menor que el mínimo requerido (se ha estancado)
@@ -105,3 +105,5 @@ def train(content_path,
         # Save image (every 500 steps so we don't flood the output folder)
         if step % 500 == 0:
             save_image(denorm(generated_img), f"{output_path}/generated_{step}.png")
+    save_image(denorm(generated_img), f"{output_path}/generated_{num_steps}.png")
+    print(f"Final image saved: {output_path}/generated_{num_steps}.png")
