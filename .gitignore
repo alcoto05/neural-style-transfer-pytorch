@@ -1,6 +1,8 @@
 # Ignore images
-inputs/
-outputs/
+inputs/content/*
+inputs/style/*
+
+outputs/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

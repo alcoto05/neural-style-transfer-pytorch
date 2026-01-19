@@ -11,13 +11,28 @@ device= torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
 
+def early_stopping_setup(total_loss,prev_loss = float('inf'), patience = 50, patience_counter = 0, min_delta = 0.01):
+        current_loss = total_loss.item()
+        # Si la diferencia es menor que el mínimo requerido (se ha estancado)
+        if abs(prev_loss - current_loss) < min_delta:
+            patience_counter += 1
+            if patience_counter >= patience:
+                print(f"Early Stop: No significant improvement in loss for {patience} consecutive checks.")
+                return True  
+        else:
+            patience_counter = 0 
+            
+        prev_loss = current_loss
+
+
 def train(content_path, 
     style_path, 
-    output_path="outputs/", 
-    num_steps=3000, 
+    num_steps,         
+    output_path, 
+    learning_rate,
     content_weight=1, 
-    style_weight=1e6,
-    learning_rate=0.003):
+    style_weight=1e7,
+):
 
     ### LOADING DATA ###
     content_img = image_loader(content_path)
@@ -70,23 +85,23 @@ def train(content_path,
         # Total loss
         total_loss = (content_weight * content_loss) + (style_weight * style_loss)
         
+        
+
         optimizer.zero_grad()
         total_loss.backward()
         optimizer.step()
 
-        if step % 10 == 0:  # Every 10 steps we can see the progress
+        if step % 100 == 0:  # Every 100 steps we can see the progress
             print(f"Step [{step}/{num_steps}] Loss: {total_loss.item():.2f}")
+
+
+        ### early stopping check ###
+        stop= early_stopping_setup(total_loss)
+        if stop:
+            print(f"Training stopped early at step {step}.")
+            break   
 
         # Save image (every 500 steps so we don't flood the output folder)
         if step % 500 == 0:
             save_image(generated_img, f"{output_path}/generated_{step}.png")
 
-if __name__ == "__main__":
-    content_file = "inputs/content/puppy-1.jpg"  
-    style_file = "inputs/style/the_scream.jpg"     
-    
-    import os
-    if not os.path.exists(content_file) or not os.path.exists(style_file):
-        raise FileNotFoundError("Content or style image file not found. Please ensure the paths are correct.")
-    else:
-        train(content_path=content_file, style_path=style_file)
